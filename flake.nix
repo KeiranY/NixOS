@@ -46,7 +46,7 @@
         let pkgs = nixpkgs.legacyPackages.${system}; in
         {
           default = pkgs.mkShell {
-            packages = with pkgs; [ sops age ssh-to-age alejandra ];
+            packages = with pkgs; [ sops age ssh-to-age alejandra gh openssh ];
             shellHook = ''
               # Keep commits working on a fresh machine that has no git identity.
               export GIT_AUTHOR_NAME="''${GIT_AUTHOR_NAME:-KeiranY}"

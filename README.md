@@ -37,7 +37,25 @@ Work on a clone inside the Linux filesystem (building on `/mnt/c` is slow):
 
 ```bash
 git clone <remote> ~/src/NixOS && cd ~/src/NixOS
-nix develop          # provides sops, age, ssh-to-age
+nix develop          # provides sops, age, ssh-to-age, gh, openssh
+```
+
+### 1b. GitHub access (push)
+
+GitHub no longer accepts account passwords over HTTPS. Pick one:
+
+```bash
+# Option A — SSH (recommended; works from the installed hosts too)
+git remote set-url origin git@github.com:KeiranY/NixOS.git
+ssh-keygen -t ed25519 -C "kcyoung1997@hotmail.co.uk"   # only if you have no key
+cat ~/.ssh/id_ed25519.pub                               # add at https://github.com/settings/keys
+ssh -T git@github.com                                   # expect "Hi KeiranY!"
+git push
+
+# Option B — GitHub CLI (HTTPS token stored in the credential helper)
+gh auth login          # GitHub.com -> HTTPS -> authenticate in browser/device
+gh auth setup-git
+git push
 ```
 
 ### 2. Encrypt secrets
