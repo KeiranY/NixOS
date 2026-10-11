@@ -60,17 +60,25 @@ git push
 
 ### 2. Encrypt secrets
 
-`secrets/common.yaml` holds the wifi PSK used by both hosts.
+`secrets/common.yaml` holds shared secrets for both hosts:
+
+- `wifi_psk` — the wifi password.
+- `gh_token` — a GitHub CLI token that pre-authenticates `gh` and `git` on the
+  hosts (exported as `GH_TOKEN`, and used as git's credential helper).
 
 ```bash
 mkdir -p ~/.config/sops/age
 cp keys/kcy.key ~/.config/sops/age/keys.txt && chmod 600 ~/.config/sops/age/keys.txt
-$EDITOR secrets/common.yaml                          # set the real wifi_psk
+$EDITOR secrets/common.yaml                          # set wifi_psk
+# add the gh token straight from an existing `gh auth login`:
+sops --set '["gh_token"]' "\"$(gh auth token)\"" secrets/common.yaml
 sops --encrypt --in-place secrets/common.yaml        # .sops.yaml picks the recipients
 sops --decrypt secrets/common.yaml                   # verify
 ```
 
-Commit the encrypted file. Plaintext and `keys/` must never be committed.
+If `secrets/common.yaml` is already encrypted, skip the `--encrypt` step —
+`sops --set` edits it in place. Commit the encrypted file; plaintext and `keys/`
+must never be committed.
 
 ### 3. Install a host
 

@@ -10,6 +10,7 @@
     ./sops.nix
     ./network.nix
     ./git.nix
+    ./gh.nix
   ];
 
   nixpkgs.config.allowUnfree = true;
