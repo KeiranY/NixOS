@@ -27,14 +27,7 @@ in {
   };
 
   config = lib.mkIf cfg.enable {
-    environment.systemPackages = [ pkgs.vulnix pkgs.jq pkgs.coreutils pkgs.gawk pkgs.git ];
-
-    environment.etc."motd.d".source = pkgs.runCommand "motd-d" {} ''
-      mkdir -p $out
-      touch $out/.keep
-    '';
-
-    environment.systemPackages = [ (pkgs.writeShellScriptBin "motd-generate" ''
+    environment.systemPackages = [ pkgs.vulnix pkgs.jq pkgs.coreutils pkgs.gawk pkgs.git (pkgs.writeShellScriptBin "motd-generate" ''
       #!/usr/bin/env bash
       set -euo pipefail
       OUT_DIR="/etc/motd.d"
