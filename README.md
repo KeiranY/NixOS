@@ -86,6 +86,9 @@ nix flake update
 
 ## Notes
 
+- Git identity is configured for all hosts in `modules/common/git.nix`
+  (`programs.git`), and exported by the devShell so commits work before a host
+  is installed.
 - `hosts/<host>/hardware-configuration.nix` files are placeholders — replace each
   with the output of `nixos-generate-config` from that machine.
 - `nixos-hardware` is commented out in `flake.nix`; enable it once the laptop model

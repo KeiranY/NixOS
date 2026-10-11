@@ -9,6 +9,7 @@
     ./locale.nix
     ./sops.nix
     ./network.nix
+    ./git.nix
   ];
 
   nixpkgs.config.allowUnfree = true;
