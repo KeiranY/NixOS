@@ -1,0 +1,27 @@
+keys:
+  - &kcy age16cgajjc8snykyc9dcp09pm3kvg3cejz9sxj46a86d9uhlcpsudvqhlfdf3
+  - &laptop age1fw9thu2ru2s8q7tjmaz5ca2qyv63zesr5hnj5ufw4udknarr83yqz97vyz
+  - &server age139z9cxe79g0kh3yzsq94a739t5w0h9786h048fe4xdgem26u036qnfltrs
+
+creation_rules:
+  # Shared secrets (wifi PSK): readable by you and both hosts.
+  - path_regex: secrets/common\.yaml$
+    key_groups:
+      - age:
+          - *kcy
+          - *laptop
+          - *server
+
+  # Laptop-only secrets.
+  - path_regex: secrets/nix-laptop\.yaml$
+    key_groups:
+      - age:
+          - *kcy
+          - *laptop
+
+  # Server-only secrets.
+  - path_regex: secrets/nix-server\.yaml$
+    key_groups:
+      - age:
+          - *kcy
+          - *server

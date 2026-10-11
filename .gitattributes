@@ -1,0 +1,2 @@
+# Keep LF in the repo so files edited on Windows work cleanly on the Linux hosts.
+* text=auto eol=lf

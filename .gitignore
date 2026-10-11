@@ -1,0 +1,15 @@
+# Nix build outputs
+result
+result-*
+
+# Dev tooling
+.direnv/
+.envrc
+
+# Private age keys -- NEVER commit these. They are deployed to each host at
+# /var/lib/sops-nix/key.txt (see keys/README-style notes in the chat / setup steps).
+keys/
+
+# Editor / OS noise
+*.swp
+.DS_Store
