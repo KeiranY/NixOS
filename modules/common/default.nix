@@ -7,10 +7,10 @@
 
     ./nix-settings.nix
     ./locale.nix
-    ./sops.nix
+    ./secrets.nix
     ./network.nix
     ./git.nix
-    ./gh.nix
+    ./github.nix
   ];
 
   nixpkgs.config.allowUnfree = true;
