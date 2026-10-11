@@ -11,6 +11,8 @@
     ./network.nix
     ./git.nix
     ./github.nix
+    ./motd.nix
+    ./flake-clone.nix
   ];
 
   nixpkgs.config.allowUnfree = true;

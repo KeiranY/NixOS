@@ -2,7 +2,7 @@
 {
   imports = [
     ./hardware-configuration.nix
-    ../../modules/hardware/server.nix
+    ../../modules/hardware/laptop.nix
   ];
 
   networking.hostName = hostname;
@@ -16,4 +16,7 @@
   sops.defaultSopsFile = ../../secrets/common.yaml;
   # Host-specific secrets go in secrets/nix-server.yaml, e.g.:
   # sops.secrets."something".sopsFile = ../../secrets/nix-server.yaml;
+
+  # MOTD with vulnerability monitoring
+  motd.enable = true;
 }
