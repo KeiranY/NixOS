@@ -6,5 +6,6 @@
     ./laptop-hardware.nix
     ./services.nix
     ./reverse-proxy.nix
+    ./acme.nix
   ];
 }
