@@ -50,7 +50,7 @@
   # Fail2ban for SSH brute-force protection
   services.fail2ban = {
     enable = true;
-    jails = {
+    settings = {
       sshd = {
         enabled = true;
         port = "ssh";
@@ -59,7 +59,6 @@
         maxretry = 3;
         bantime = "1h";
         findtime = "10m";
-        backend = "systemd";
       };
     };
   };
