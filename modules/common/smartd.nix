@@ -25,7 +25,7 @@
         echo "smartctl not installed"
       fi
     } > "$OUT_FILE.tmp"
-    cat "$OUT_FILE.tmp" > "$OUT_FILE"
+    cat "$OUT_FILE.tmp" >> "$OUT_FILE"
     tail -100 "$OUT_FILE" > "$OUT_FILE.trim" && mv "$OUT_FILE.trim" "$OUT_FILE"
   '';
 in {

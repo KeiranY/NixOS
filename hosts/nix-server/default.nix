@@ -7,6 +7,7 @@
     ../../modules/server/laptop-hardware.nix
     ../../modules/services
     ../../modules/server/services.nix
+    ../../modules/server/passwords.nix
     ../../modules/server/reverse-proxy.nix
   ];
 
