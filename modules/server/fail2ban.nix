@@ -2,15 +2,6 @@
 {
   services.fail2ban = {
     enable = true;
-    jails = {
-      sshd = {
-        enabled = true;
-        settings = ''
-          maxretry = 3
-          bantime = 1h
-          findtime = 10m
-        '';
-      };
-    };
+    bantime = "1h";
   };
 }
