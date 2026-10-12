@@ -30,7 +30,7 @@
 in {
   services.smartd = {
     enable = true;
-    extraOptions = ["-i 1800" "-d removable" "-n standby"];
+    extraOptions = ["-i 1800" "-n standby"];
     devices = [
       {device = "/dev/sda";}
     ];
