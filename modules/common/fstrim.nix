@@ -2,6 +2,6 @@
 {
   services.fstrim = {
     enable = true;
-    cronSchedule = "weekly";
+    interval = "weekly";
   };
 }

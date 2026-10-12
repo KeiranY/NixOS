@@ -23,6 +23,7 @@
     let
       lib = import ./lib { inherit inputs; };
       systems = [ "x86_64-linux" ];
+      devShell = import ./devshell.nix { inherit pkgs; };
     in
     {
       nixosConfigurations = {
@@ -45,16 +46,7 @@
       devShells = nixpkgs.lib.genAttrs systems (system:
         let pkgs = nixpkgs.legacyPackages.${system}; in
         {
-          default = pkgs.mkShell {
-            packages = with pkgs; [ sops age ssh-to-age alejandra gh openssh nil ];
-            shellHook = ''
-              # Keep commits working on a fresh machine that has no git identity.
-              export GIT_AUTHOR_NAME="''${GIT_AUTHOR_NAME:-KeiranY}"
-              export GIT_AUTHOR_EMAIL="''${GIT_AUTHOR_EMAIL:-kcyoung1997@hotmail.co.uk}"
-              export GIT_COMMITTER_NAME="''${GIT_COMMITTER_NAME:-$GIT_AUTHOR_NAME}"
-              export GIT_COMMITTER_EMAIL="''${GIT_COMMITTER_EMAIL:-$GIT_AUTHOR_EMAIL}"
-            '';
-          };
+          default = devShell { inherit pkgs; };
         });
     };
 }
