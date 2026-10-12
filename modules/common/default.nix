@@ -11,6 +11,10 @@
     ./network.nix
     ./git.nix
     ./github.nix
+    ./mdns.nix
+    ./smartd.nix
+    ./fstrim.nix
+    ./static-ip.nix
     ./motd.nix
     ./flake-clone.nix
   ];

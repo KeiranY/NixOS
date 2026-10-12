@@ -3,6 +3,8 @@
   imports = [
     ./hardware-configuration.nix
     ../../modules/hardware/laptop.nix
+    ../../modules/server/ssh.nix
+    ../../modules/server/laptop-hardware.nix
   ];
 
   networking.hostName = hostname;
