@@ -10,6 +10,7 @@
   motdGenerate = pkgs.writeShellScriptBin "motd-generate" ''
     #!/usr/bin/env bash
     set -euo pipefail
+    export PATH="${pkgs.coreutils}/bin:${pkgs.gawk}/bin:${pkgs.procps}/bin:${pkgs.gnused}/bin:$PATH"
     OUT_DIR="/etc/motd.d"
     mkdir -p "$OUT_DIR"
     TIMESTAMP=$(date -u +"%Y-%m-%d %H:%M UTC")
@@ -99,7 +100,7 @@
       printf "%s                                                                              %s\n" "$V" "$V"
       LAST_REBUILD=$(nixos-version 2>/dev/null | head -1 || echo "unknown")
       UPTIME=$(uptime -p 2>/dev/null | sed 's/up //' || echo "unknown")
-      LOAD=$(cat /proc/loadavg 2>/dev/null | awk '{print $1, $2, $3}' || echo "? ? ?")
+      LOAD=$(cat /proc/loadavg 2>/dev/null | ${pkgs.gawk}/bin/awk '{print $1, $2, $3}' || echo "? ? ?")
       printf "%s  Last rebuild: %s  •  Uptime: %s  •  Load: %s    %s\n" "$V" "$LAST_REBUILD" "$UPTIME" "$LOAD" "$V"
       printf "%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s\n" \
         "$BL" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$BR"
@@ -112,7 +113,7 @@ in {
   };
 
   config = lib.mkIf cfg.enable {
-    environment.systemPackages = [pkgs.vulnix pkgs.jq pkgs.coreutils pkgs.gawk pkgs.git motdGenerate];
+    environment.systemPackages = [pkgs.vulnix pkgs.jq pkgs.coreutils pkgs.gawk pkgs.procps pkgs.gnused pkgs.git motdGenerate];
 
     systemd.tmpfiles.rules = [
       "d /etc/motd.d 0755 root root - -"
