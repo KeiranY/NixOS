@@ -1,6 +1,5 @@
-# Service modules - only custom modules without nixpkgs equivalents
+# Service modules - import individually as needed
 {...}: {
   imports = [
-    ./reverse-proxy.nix
   ];
 }
