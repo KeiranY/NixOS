@@ -88,7 +88,7 @@ in {
     };
 
     # Nginx snippet for ACME challenge
-    nginx = lib.mkIf config.nginx.enable {
+    nginx = lib.mkIf (config.nginx ? enable && config.nginx.enable) {
       httpConfig = ''
         location /.well-known/acme-challenge/ {
           root ${cfg.webrootPath};
