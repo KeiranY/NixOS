@@ -32,6 +32,11 @@
     lib = import ./lib {inherit inputs;};
     systems = ["x86_64-linux"];
     devShellFn = import ./devshell.nix;
+
+    # Custom packages
+    pkgs = import ./pkgs {
+      inherit (nixpkgs.legacyPackages.x86_64-linux) system;
+    };
   in {
     nixosConfigurations = {
       nix-laptop = lib.mkHost {
@@ -42,6 +47,7 @@
       nix-server = lib.mkHost {
         hostname = "nix-server";
         extraModules = [./modules/server];
+        pkgs = pkgs;
       };
     };
 

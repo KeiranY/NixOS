@@ -8,9 +8,11 @@
 in {
   security.acme = {
     acceptTerms = true;
-    email = "admin@${domain}";
-    defaults.dnsProvider = "porkbun";
-    defaults.environmentFile = config.sops.templates."acme_env".path;
+    defaults = {
+      email = "admin@${domain}";
+      dnsProvider = "porkbun";
+      environmentFile = config.sops.templates."acme_env".path;
+    };
     certs = {
       "wildcard-${domain}" = {
         domain = domain;

@@ -187,10 +187,6 @@ in {
     wants = ["bazarr-env.service"];
   };
 
-  # Open firewall ports NOT covered by openFirewall:
-  # - Jellyfin HTTPS (8920) - not exposed by declarative-jellyfin's openFirewall
-  # - Jellyfin discovery UDP (1900, 7359)
-  # - Jellyfin default port (8096) - openFirewall should open it but be explicit
   networking.firewall.allowedTCPPorts = [8920]; # Jellyfin HTTPS
   networking.firewall.allowedUDPPorts = [1900 7359]; # Jellyfin discovery
 }
