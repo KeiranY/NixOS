@@ -158,6 +158,13 @@ in {
 
   # Bazarr -> Jellyfin integration (via Dynaconf env vars, since settings option not in 26.05)
   # Create environment file with secrets for Bazarr
+  bazarrEnvScript = pkgs.writeShellScriptBin "bazarr-env" ''
+    #!/usr/bin/env bash
+    set -euo pipefail
+    mkdir -p /run/bazarr
+    printf "DYNACONF_jellyfin__enable=true\nDYNACONF_jellyfin__url=http://localhost:8096\nDYNACONF_jellyfin__apikey=$(cat ${config.sops.secrets."jellyfin/bazarr_apikey".path})\nDYNACONF_jellyfin__refresh_method=Immediate\nDYNACONF_jellyfin__movie_library=Movies\nDYNACONF_jellyfin__series_library=Shows\nDYNACONF_jellyfin__update_movie_library=true\nDYNACONF_jellyfin__update_series_library=true\n" > /run/bazarr/env
+  '';
+
   systemd.services.bazarr-env = {
     description = "Generate Bazarr environment file with Jellyfin secrets";
     wantedBy = ["bazarr.service"];
@@ -165,7 +172,7 @@ in {
     serviceConfig = {
       Type = "oneshot";
       RemainAfterExit = true;
-      ExecStart = "${pkgs.bash}/bin/bash -c '${pkgs.coreutils}/bin/mkdir -p /run/bazarr && printf \"DYNACONF_jellyfin__enable=true\\nDYNACONF_jellyfin__url=http://localhost:8096\\nDYNACONF_jellyfin__apikey=$(cat ${config.sops.secrets.\"jellyfin/bazarr_apikey\".path})\\nDYNACONF_jellyfin__refresh_method=Immediate\\nDYNACONF_jellyfin__movie_library=Movies\\nDYNACONF_jellyfin__series_library=Shows\\nDYNACONF_jellyfin__update_movie_library=true\\nDYNACONF_jellyfin__update_series_library=true\\n\" > /run/bazarr/env'";
+      ExecStart = "${bazarrEnvScript}/bin/bazarr-env";
       User = "root";
     };
   };
