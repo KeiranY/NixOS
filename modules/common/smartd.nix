@@ -3,8 +3,9 @@
   services.smartd = {
     enable = true;
     pollInterval = "30m";
-    extraConfig = ''
-      DEVICESCAN -d removable -n standby -a -m kcy
-    '';
+    extraOptions = "-d removable -n standby -a -m kcy";
+    devices = [
+      { device = "-a"; }
+    ];
   };
 }
