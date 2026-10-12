@@ -1,0 +1,7 @@
+{
+    "recommendations": [
+        "jnoortheen.nix-ide",
+        // For running nil/nixfmt on Windows
+        "ms-vscode-remote.remote-wsl",
+    ]
+}
