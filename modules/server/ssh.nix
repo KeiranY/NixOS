@@ -1,8 +1,13 @@
-{ config, pkgs, lib, ... }:
 {
+  config,
+  pkgs,
+  lib,
+  ...
+}: {
   services.openssh = {
     enable = true;
     openFirewall = true;
+    ports = [22 9922];
     settings = {
       # Key-only authentication; no passwords over the network.
       PasswordAuthentication = false;
