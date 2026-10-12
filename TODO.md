@@ -1,0 +1,2 @@
+- Laptop build
+- Live USB based on the laptop build?
