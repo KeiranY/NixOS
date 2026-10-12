@@ -5,6 +5,7 @@
     ../../modules/hardware/laptop.nix
     ../../modules/server/ssh.nix
     ../../modules/server/laptop-hardware.nix
+    ../../modules/services
   ];
 
   networking.hostName = hostname;
