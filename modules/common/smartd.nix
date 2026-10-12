@@ -7,6 +7,7 @@
   smartctlCheck = pkgs.writeShellScript "smartctl-check" ''
     #!/usr/bin/env bash
     set -euo pipefail
+    export PATH="/run/current-system/sw/bin:${pkgs.coreutils}/bin:${pkgs.smartmontools}/bin:$PATH"
     OUT_FILE="/etc/motd.d/smartd-alerts"
     mkdir -p "$(dirname "$OUT_FILE")"
     {

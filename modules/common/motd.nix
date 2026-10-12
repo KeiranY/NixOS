@@ -10,7 +10,7 @@
   motdGenerate = pkgs.writeShellScriptBin "motd-generate" ''
     #!/usr/bin/env bash
     set -euo pipefail
-    export PATH="${pkgs.coreutils}/bin:${pkgs.gawk}/bin:${pkgs.procps}/bin:${pkgs.gnused}/bin:$PATH"
+    export PATH="/run/current-system/sw/bin:${pkgs.coreutils}/bin:${pkgs.gawk}/bin:${pkgs.procps}/bin:${pkgs.gnused}/bin:$PATH"
     OUT_DIR="/etc/motd.d"
     mkdir -p "$OUT_DIR"
     TIMESTAMP=$(date -u +"%Y-%m-%d %H:%M UTC")
