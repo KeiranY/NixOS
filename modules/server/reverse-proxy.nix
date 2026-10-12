@@ -1,107 +1,156 @@
-{ config, pkgs, lib, ... }:
-let
-  cfg = config.services.reverseProxy;
-  cloneScript = pkgs.writeShellScript "reverse-proxy-clone" ''
-    if [[ ! -d ${cfg.installDir}/.git ]]; then
-      ${pkgs.git}/bin/git clone --branch ${cfg.branch} ${cfg.repo} ${cfg.installDir}
-    else
-      cd ${cfg.installDir} && ${pkgs.git}/bin/git pull origin ${cfg.branch}
-    fi
-  '';
-  buildScript = pkgs.writeShellScript "reverse-proxy-build" ''
-    # Auto-detect build system
-    if [[ -f go.mod ]]; then
-      ${pkgs.go}/bin/go build -o reverse-proxy .
-    elif [[ -f Cargo.toml ]]; then
-      ${pkgs.rust}/bin/cargo build --release
-      cp target/release/reverse-proxy ${cfg.installDir}/reverse-proxy
-    elif [[ -f package.json ]]; then
-      ${pkgs.nodejs}/bin/npm ci && ${pkgs.nodejs}/bin/npm run build
-    elif [[ -f Makefile ]]; then
-      make
-    fi
-  '';
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}: let
+  cfg = config.services.reverse-proxy;
 in {
-  options.services.reverseProxy = {
-    enable = lib.mkEnableOption "Custom reverse proxy (from https://github.com/KeiranY/reverse-proxy)";
-    repo = lib.mkOption {
-      type = lib.types.str;
-      default = "https://github.com/KeiranY/reverse-proxy";
-      description = "Repository URL for the reverse proxy";
-    };
-    branch = lib.mkOption {
-      type = lib.types.str;
-      default = "main";
-      description = "Branch to deploy";
-    };
-    installDir = lib.mkOption {
-      type = lib.types.path;
-      default = "/opt/reverse-proxy";
-      description = "Installation directory";
-    };
-    port = lib.mkOption {
+  options.services.reverse-proxy = {
+    enable = lib.mkEnableOption "reverse-proxy";
+
+    httpPort = lib.mkOption {
       type = lib.types.int;
-      default = 8080;
-      description = "Reverse proxy listening port";
+      default = 80;
+      description = "HTTP port for redirect to HTTPS";
     };
-    configFile = lib.mkOption {
-      type = lib.types.nullOr lib.types.path;
-      default = null;
-      description = "Path to config file (can be generated from sops)";
+
+    sslPort = lib.mkOption {
+      type = lib.types.int;
+      default = 443;
+      description = "HTTPS port for the reverse proxy";
     };
-    environment = lib.mkOption {
+
+    domain = lib.mkOption {
+      type = lib.types.str;
+      description = "Main domain for the reverse proxy (e.g., example.com)";
+    };
+
+    router = lib.mkOption {
       type = lib.types.attrsOf lib.types.str;
-      default = { };
-      description = "Environment variables for the proxy";
+      default = {};
+      description = "Mapping of subdomains to target URLs";
+    };
+
+    allowedLogin = lib.mkOption {
+      type = lib.types.nullOr lib.types.str;
+      default = null;
+      description = "JavaScript function string for allowed login check. Receives req, returns boolean.";
+    };
+
+    noLogin = lib.mkOption {
+      type = lib.types.nullOr lib.types.str;
+      default = null;
+      description = "JavaScript function string for paths that don't require login. Receives req, returns boolean.";
+    };
+
+    sslKeyPath = lib.mkOption {
+      type = lib.types.path;
+      description = "Path to SSL private key file";
+    };
+
+    sslCertPath = lib.mkOption {
+      type = lib.types.path;
+      description = "Path to SSL certificate file";
+    };
+
+    auth0 = lib.mkOption {
+      type = lib.types.nullOr (lib.types.submodule {
+        options = {
+          secret = lib.mkOption {
+            type = lib.types.str;
+            description = "Auth0 client secret (should be from sops-nix)";
+          };
+          baseURL = lib.mkOption {
+            type = lib.types.str;
+            description = "Auth0 base URL (e.g., https://example.com:443)";
+          };
+          clientID = lib.mkOption {
+            type = lib.types.str;
+            description = "Auth0 client ID";
+          };
+          issuerBaseURL = lib.mkOption {
+            type = lib.types.str;
+            description = "Auth0 issuer base URL (e.g., https://example.auth0.com)";
+          };
+        };
+      });
+      default = null;
+      description = "Auth0 configuration";
     };
   };
 
   config = lib.mkIf cfg.enable {
-    # Create install directory
+    # Generate config.js at runtime
     systemd.tmpfiles.rules = [
-      "d ${cfg.installDir} 0755 root root - -"
+      "d /run/reverse-proxy 0755 root root -"
     ];
 
-    # Clone/update service
-    systemd.services.reverse-proxy-clone = {
-      wantedBy = [ "multi-user.target" ];
-      serviceConfig = {
-        Type = "oneshot";
-        RemainAfterExit = true;
-        ExecStart = "${cloneScript}";
-      };
-    };
-
-    # Build service (assuming it's a Go/Rust/Node project with a build step)
-    systemd.services.reverse-proxy-build = {
-      wantedBy = [ "multi-user.target" ];
-      after = [ "reverse-proxy-clone.service" ];
-      serviceConfig = {
-        Type = "oneshot";
-        RemainAfterExit = true;
-        WorkingDirectory = cfg.installDir;
-        ExecStart = "${buildScript}";
-      };
-    };
-
-    # Main reverse proxy service
     systemd.services.reverse-proxy = {
-      wantedBy = [ "multi-user.target" ];
-      after = [ "network-online.target" "reverse-proxy-build.service" ];
-      wants = [ "network-online.target" ];
+      enable = true;
+      after = ["network-online.target"];
+      wants = ["network-online.target"];
+      path = [cfg.sslKeyPath cfg.sslCertPath];
       serviceConfig = {
-        Type = "simple";
-        WorkingDirectory = cfg.installDir;
-        ExecStart = "${cfg.installDir}/reverse-proxy";
+        ExecStart = "${pkgs.reverse-proxy}/bin/reverse-proxy";
+        WorkingDirectory = "/run/reverse-proxy";
+        Environment = [
+          "NODE_ENV=production"
+          "CONFIG_PATH=/run/reverse-proxy/config.js"
+        ];
         Restart = "on-failure";
         RestartSec = 5;
-        Environment = [
-          "PORT=${toString cfg.port}"
-        ] ++ lib.mapAttrsToList (k: v: "${k}=${v}") cfg.environment
-        ++ lib.optionalAttrs (cfg.configFile != null) { CONFIG_FILE = cfg.configFile; };
       };
+      # Generate config.js before start
+      serviceConfig.ExecStartPre = ''
+                mkdir -p /run/reverse-proxy
+                cat > /run/reverse-proxy/config.js <<'EOF'
+        module.exports = {
+          httpPort: ${lib.generators.toString cfg.httpPort},
+          sslPort: ${lib.generators.toString cfg.sslPort},
+          domain: ${lib.generators.toString cfg.domain},
+          router: ${lib.generators.toJavaScript cfg.router},
+          allowedLogin: ${
+          if cfg.allowedLogin != null
+          then cfg.allowedLogin
+          else "() => true"
+        },
+          noLogin: ${
+          if cfg.noLogin != null
+          then cfg.noLogin
+          else "() => false"
+        },
+          sslKeyPath: ${lib.generators.toString cfg.sslKeyPath},
+          sslCertPath: ${lib.generators.toString cfg.sslCertPath},
+          auth0Secret: ${lib.generators.toString (
+          if cfg.auth0 != null
+          then cfg.auth0.secret
+          else ""
+        )},
+          auth0BaseURL: ${lib.generators.toString (
+          if cfg.auth0 != null
+          then cfg.auth0.baseURL
+          else ""
+        )},
+          auth0ClientID: ${lib.generators.toString (
+          if cfg.auth0 != null
+          then cfg.auth0.clientID
+          else ""
+        )},
+          auth0IssuerBaseURL: ${lib.generators.toString (
+          if cfg.auth0 != null
+          then cfg.auth0.issuerBaseURL
+          else ""
+        )},
+        };
+        EOF
+      '';
     };
 
-    networking.firewall.allowedTCPPorts = [ cfg.port ];
+    # Firewall
+    networking.firewall.allowedTCPPorts = [cfg.httpPort cfg.sslPort];
+
+    # Ensure package is available
+    environment.systemPackages = [pkgs.reverse-proxy];
   };
 }

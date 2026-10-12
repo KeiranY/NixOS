@@ -30,4 +30,31 @@
   # MOTD with vulnerability monitoring
   motd.enable = true;
   flakeClone.enable = true;
+
+  # Reverse proxy configuration (enable and configure as needed)
+  # services.reverse-proxy = {
+  #   enable = true;
+  #   domain = "example.com";
+  #   httpPort = 80;
+  #   sslPort = 443;
+  #   router = {
+  #     "app.example.com" = "http://127.0.0.1:8080";
+  #     "api.example.com" = "http://127.0.0.1:3000";
+  #   };
+  #   allowedLogin = "req => req.oidc.user.email.endsWith('@example.com')";
+  #   noLogin = "req => req.hostname === 'public.example.com'";
+  #   sslKeyPath = "/etc/letsencrypt/live/example.com/privkey.pem";
+  #   sslCertPath = "/etc/letsencrypt/live/example.com/fullchain.pem";
+  #   auth0 = {
+  #     secret = config.sops.secrets.reverse-proxy.auth0.secret;
+  #     baseURL = "https://example.com:443";
+  #     clientID = "your-auth0-client-id";
+  #     issuerBaseURL = "https://your-tenant.auth0.com";
+  #   };
+  # };
+
+  # Add reverse-proxy auth0 secret to sops.secrets:
+  # sops.secrets = {
+  #   "reverse-proxy/auth0/secret".sopsFile = ../../secrets/nix-server.yaml;
+  # };
 }
