@@ -56,7 +56,6 @@
         settings = ''
           maxretry = 3
           bantime = 1h
-          findtime = 10m
         '';
       };
     };
