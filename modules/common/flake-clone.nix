@@ -4,6 +4,7 @@ let
   cloneScript = pkgs.writeShellScript "flake-clone" ''
     if [[ ! -d /root/NixOS/.git ]]; then
       ${pkgs.git}/bin/git clone --branch "${cfg.flakeBranch}" "${cfg.flakeRepo}" /root/NixOS
+      ${pkgs.git}/bin/git -C /root/NixOS config core.hooksPath .githooks
     fi
   '';
 in {

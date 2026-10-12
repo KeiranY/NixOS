@@ -35,5 +35,6 @@ pkgs.mkShell {
     export GIT_AUTHOR_EMAIL="''${GIT_AUTHOR_EMAIL:-kcyoung1997@hotmail.co.uk}"
     export GIT_COMMITTER_NAME="''${GIT_COMMITTER_NAME:-$GIT_AUTHOR_NAME}"
     export GIT_COMMITTER_EMAIL="''${GIT_COMMITTER_EMAIL:-$GIT_AUTHOR_EMAIL}"
+    git config core.hooksPath .githooks
   '';
 }
