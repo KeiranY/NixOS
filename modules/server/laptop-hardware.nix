@@ -5,7 +5,9 @@
     lidSwitch = "ignore";
     lidSwitchDocked = "ignore";
     lidSwitchExternalPower = "ignore";
-    handleSuspendKey = "ignore";
+    suspendKey = "ignore";
+    powerKey = "ignore";
+    hibernateKey = "ignore";
   };
 
   # Also disable suspend/hibernate targets
