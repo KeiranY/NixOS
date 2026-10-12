@@ -23,7 +23,7 @@
     let
       lib = import ./lib { inherit inputs; };
       systems = [ "x86_64-linux" ];
-      devShell = import ./devshell.nix { inherit pkgs; };
+      devShell = import ./devshell.nix { pkgs = nixpkgs.legacyPackages.x86_64-linux; };
     in
     {
       nixosConfigurations = {
