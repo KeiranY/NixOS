@@ -4,8 +4,8 @@
   services.logind = {
     lidSwitch = "ignore";
     lidSwitchDocked = "ignore";
+    lidSwitchExternalPower = "ignore";
     handleSuspendKey = "ignore";
-    handleLidSwitchExternalPower = "ignore";
   };
 
   # Also disable suspend/hibernate targets
