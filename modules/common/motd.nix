@@ -1,6 +1,7 @@
 { config, pkgs, lib, hostname, ... }:
 let
   cfg = config.motd;
+
   motdGenerate = pkgs.writeShellScriptBin "motd-generate" ''
     #!/usr/bin/env bash
     set -euo pipefail
@@ -9,12 +10,8 @@ let
     TIMESTAMP=$(date -u +"%Y-%m-%d %H:%M UTC")
     HOST=$(hostname)
 
-    # Box drawing chars
-    if [[ "${cfg.useAscii}" == "true" ]]; then
-      TL="+"; TR="+"; BL="+"; BR="+"; H="-"; V="|"; T="+"; B="+"; L="+"; R="+"; TL2="+"; TR2="+"
-    else
-      TL="┌"; TR="┐"; BL="└"; BR="┘"; H="─"; V="│"; T="┬"; B="┴"; L="├"; R="┤"; TL2="├"; TR2="┤"
-    fi
+    # Box drawing chars (hardcoded to Unicode for now)
+    TL="┌"; TR="┐"; BL="└"; BR="┘"; H="─"; V="│"; T="┬"; B="┴"; L="├"; R="┤"; TL2="├"; TR2="┤"
 
     # --- Vulnix section ---
     VULN_FILE="$OUT_DIR/vuln"
@@ -30,7 +27,7 @@ let
 
     # --- Flake updates section ---
     UPDATE_FILE="$OUT_DIR/updates"
-    FLAKE_PATH="${cfg.flakePath}"
+    FLAKE_PATH="/etc/nixos"
     if [[ -d "$FLAKE_PATH/.git" ]]; then
       cd "$FLAKE_PATH"
       nix flake update --dry-run 2>&1 |
@@ -44,14 +41,14 @@ let
     # --- Combined summary ---
     SUMMARY_FILE="$OUT_DIR/summary"
     {
-      printf "%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s\n" \
-        "$TL" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$TR"
+      printf "%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s\n" \
+        "$TL" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$TR"
       printf "%s                            %s — MOTD                                 %s\n" "$V" "$HOST" "$V"
       printf "%s                         Generated: %s                      %s\n" "$V" "$TIMESTAMP" "$V"
-      printf "%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s\n" \
-        "$TL2" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$TR2"
+      printf "%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s\n" \
+        "$TL2" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$TR2"
       printf "%s  ⚠ VULNERABILITIES (vulnix — %s)                                    %s\n" "$V" "$(date -u +"%Y-%m-%d")" "$V"
-      printf "%s  %s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s  %s\n" "$V" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$V"
+      printf "%s  %s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s  %s\n" "$V" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$V"
       if [[ -s "$VULN_FILE" ]] && ! grep -q "failed\|not installed" "$VULN_FILE"; then
         while IFS= read -r line; do
           printf "%s  %s  %s\n" "$V" "$line" "$V"
@@ -63,10 +60,10 @@ let
       else
         printf "%s  ✅ No known vulnerabilities (vulnix)                                        %s\n" "$V" "$V"
       fi
-      printf "%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s\n" \
-        "$TL2" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$TR2"
+      printf "%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s\n" \
+        "$TL2" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$TR2"
       printf "%s  📦 PENDING UPDATES (nix flake update --dry-run — %s)                %s\n" "$V" "$(date -u +"%Y-%m-%d")" "$V"
-      printf "%s  %s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s  %s\n" "$V" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$V"
+      printf "%s  %s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s  %s\n" "$V" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$V"
       if [[ -s "$UPDATE_FILE" ]] && ! grep -q "failed\|not found" "$UPDATE_FILE"; then
         while IFS= read -r line; do
           printf "%s  %s  %s\n" "$V" "$line" "$V"
@@ -78,9 +75,9 @@ let
         printf "%s  ✅ Flake inputs up to date                                                  %s\n" "$V" "$V"
       fi
       printf "%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s\n" \
-        "$TL2" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$TR2"
+        "$TL2" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$TR2"
       printf "%s  💡 RECOMMENDATIONS                                                            %s\n" "$V" "$V"
-      printf "%s  %s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s  %s\n" "$V" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$V"
+      printf "%s  %s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s  %s\n" "$V" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$V"
       printf "%s  [1] Rebuild now:  sudo nixos-rebuild switch --flake .#%s            %s\n" "$V" "$HOST" "$V"
       printf "%s  [2] Update flake: nix flake update (pulls security fixes)                   %s\n" "$V" "$V"
       if [[ -s "$VULN_FILE" ]] && grep -q "unfixed" "$VULN_FILE"; then
@@ -91,8 +88,8 @@ let
       UPTIME=$(uptime -p 2>/dev/null | sed 's/up //' || echo "unknown")
       LOAD=$(cat /proc/loadavg 2>/dev/null | awk '{print $1, $2, $3}' || echo "? ? ?")
       printf "%s  Last rebuild: %s  •  Uptime: %s  •  Load: %s    %s\n" "$V" "$LAST_REBUILD" "$UPTIME" "$LOAD" "$V"
-      printf "%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s\n" \
-        "$BL" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$BR"
+      printf "%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s\n" \
+        "$BL" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$BR"
     } > "$SUMMARY_FILE.tmp"
     mv "$SUMMARY_FILE.tmp" "$SUMMARY_FILE"
   '';
@@ -113,11 +110,6 @@ in {
       type = lib.types.str;
       default = "master";
       description = "Branch to clone";
-    };
-    useAscii = lib.mkOption {
-      type = lib.types.bool;
-      default = false;
-      description = "Use ASCII box drawing instead of Unicode";
     };
   };
 

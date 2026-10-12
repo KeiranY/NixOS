@@ -11,7 +11,7 @@
     ./network.nix
     ./git.nix
     ./github.nix
-    ./motd.nix
+    # ./motd.nix
     ./flake-clone.nix
   ];
 
