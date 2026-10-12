@@ -87,12 +87,12 @@ On the machine, boot the NixOS 26.05 ISO, partition UEFI + ext4, mount at `/mnt`
 
 ```bash
 mkdir -p ~/.config/nix && echo 'experimental-features = nix-command flakes' >> ~/.config/nix/nix.conf
-git clone <remote> /root/nixos-config && cd /root/nixos-config
+git clone <remote> /root/NixOS && cd /root/NixOS
 nixos-generate-config --root /mnt
 cp /mnt/etc/nixos/hardware-configuration.nix hosts/<host>/hardware-configuration.nix
 install -D -m600 /path/to/keys/<host>.key /mnt/var/lib/sops-nix/key.txt   # transfer via USB
 git add -A
-nixos-install --flake /root/nixos-config#<host>
+nixos-install --flake /root/NixOS#<host>
 ```
 
 First login uses password `changeme` — change it immediately with `passwd`.

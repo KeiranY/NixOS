@@ -27,7 +27,7 @@ let
 
     # --- Flake updates section ---
     UPDATE_FILE="$OUT_DIR/updates"
-    FLAKE_PATH="/etc/nixos"
+    FLAKE_PATH="/root/NixOS"
     if [[ -d "$FLAKE_PATH/.git" ]]; then
       cd "$FLAKE_PATH"
       nix flake update --dry-run 2>&1 |

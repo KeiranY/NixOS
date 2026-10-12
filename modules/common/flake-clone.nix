@@ -2,13 +2,13 @@
 let
   cfg = config.flakeClone;
   cloneScript = pkgs.writeShellScript "flake-clone" ''
-    if [[ ! -d /etc/nixos/.git ]]; then
-      ${pkgs.git}/bin/git clone --branch "${cfg.flakeBranch}" "${cfg.flakeRepo}" /etc/nixos
+    if [[ ! -d /root/NixOS/.git ]]; then
+      ${pkgs.git}/bin/git clone --branch "${cfg.flakeBranch}" "${cfg.flakeRepo}" /root/NixOS
     fi
   '';
 in {
   options.flakeClone = {
-    enable = lib.mkEnableOption "Auto-clone flake repo to /etc/nixos on first boot";
+    enable = lib.mkEnableOption "Auto-clone flake repo to /root/NixOS on first boot";
     flakeRepo = lib.mkOption {
       type = lib.types.str;
       default = "https://github.com/KeiranY/NixOS.git";
@@ -27,9 +27,9 @@ in {
       serviceConfig = {
         Type = "oneshot";
         RemainAfterExit = true;
-        ExecStartPre = [ "-${pkgs.coreutils}/bin/mkdir -p /etc/nixos" ];
+        ExecStartPre = [ "-${pkgs.coreutils}/bin/mkdir -p /root" ];
         ExecStart = "${cloneScript}";
-        ConditionPathExists = "!/etc/nixos/.git";
+        ConditionPathExists = "!/root/NixOS/.git";
       };
     };
   };
