@@ -12,9 +12,9 @@
 
   # Also disable suspend/hibernate targets
   systemd.targets = {
-    sleep.target.masked = true;
-    suspend.target.masked = true;
-    hibernate.target.masked = true;
-    hybrid-sleep.target.masked = true;
+    sleep.enable = false;
+    suspend.enable = false;
+    hibernate.enable = false;
+    hybrid-sleep.enable = false;
   };
 }
