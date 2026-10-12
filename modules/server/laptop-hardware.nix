@@ -1,13 +1,13 @@
 { config, pkgs, lib, ... }:
 {
   # Disable sleep/suspend on lid close for server
-  services.logind = {
-    lidSwitch = "ignore";
-    lidSwitchDocked = "ignore";
-    lidSwitchExternalPower = "ignore";
-    suspendKey = "ignore";
-    powerKey = "ignore";
-    hibernateKey = "ignore";
+  services.logind.settings.login = {
+    HandleLidSwitch = "ignore";
+    HandleLidSwitchDocked = "ignore";
+    HandleLidSwitchExternalPower = "ignore";
+    HandleSuspendKey = "ignore";
+    HandlePowerKey = "ignore";
+    HandleHibernateKey = "ignore";
   };
 
   # Also disable suspend/hibernate targets

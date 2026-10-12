@@ -5,12 +5,17 @@
   "nix.serverSettings": {
     "nil": {
       "formatting": {
-        "command": ["alejandra"]
+        "command": [
+          "alejandra"
+        ]
       }
     }
   },
   "editor.formatOnSave": true,
   "[nix]": {
     "editor.defaultFormatter": "jnoortheen.nix-ide"
-  }
+  },
+  "nixEnvSelector.suggestion": false,
+  "nixEnvSelector.nixFile": "${workspaceFolder}/devshell.nix",
+  "nixEnvSelector.useFlakes": false
 }
