@@ -69,6 +69,16 @@
     enable = true;
     openFirewall = true;
     webuiPort = 8081;
+    serverConfig = {
+      Preferences = {
+        WebUI = {
+          Username = "";
+          Password_PBKDF2 = "";
+          LocalHostAuth = false;
+          BypassAuthenticationSubnet = "0.0.0.0/0";
+        };
+      };
+    };
   };
   services.flaresolverr = {
     enable = true;
