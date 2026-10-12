@@ -14,5 +14,7 @@ keys/
 *.swp
 .DS_Store
 
+TODO.md
+
 .*/
 !.githooks/
