@@ -8,7 +8,18 @@
   services.home-assistant = {
     enable = true;
     configDir = "/var/lib/home-assistant";
-    config.http.server_port = 8080;
+    config = {
+      default_config = {};
+      http = {server_port = 8080;};
+      mqtt = {
+        broker = "localhost";
+        port = 1883;
+      };
+      recorder = {
+        db_url = "sqlite:////var/lib/home-assistant/home-assistant_v2.db";
+      };
+      lovelace = {mode = "yaml";};
+    };
   };
 
   # MQTT broker
