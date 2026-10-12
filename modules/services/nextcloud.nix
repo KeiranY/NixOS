@@ -109,7 +109,7 @@ in {
         User = "nextcloud";
         ExecStart = "${pkgs.php83}/bin/php -f ${cfg.configDir}/cron.php";
         Restart = "always";
-        RestartSec = 15m;
+        RestartSec = "15m";
       };
       timerConfig = {
         OnCalendar = "*/15 * * * *";
