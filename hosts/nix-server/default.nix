@@ -1,5 +1,4 @@
-{ hostname, ... }:
-{
+{hostname, ...}: {
   imports = [
     ./hardware-configuration.nix
     ../../modules/hardware/laptop.nix
@@ -7,6 +6,7 @@
     ../../modules/server/fail2ban.nix
     ../../modules/server/laptop-hardware.nix
     ../../modules/services
+    ../../modules/server/services.nix
   ];
 
   networking.hostName = hostname;
