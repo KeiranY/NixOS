@@ -5,7 +5,6 @@
     ../../modules/server/ssh.nix
     ../../modules/server/fail2ban.nix
     ../../modules/server/laptop-hardware.nix
-    ../../modules/services
     ../../modules/server/services.nix
     ../../modules/server/reverse-proxy.nix
   ];
@@ -19,8 +18,12 @@
 
   # Secrets shared by all hosts (wifi PSK). See secrets/common.yaml.
   sops.defaultSopsFile = ../../secrets/common.yaml;
-  # Host-specific secrets go in secrets/nix-server.yaml, e.g.:
-  # sops.secrets."something".sopsFile = ../../secrets/nix-server.yaml;
+  # Host-specific secrets
+  sops.secrets = {
+    "jellyfin/admin_password".sopsFile = ../../secrets/nix-server.yaml;
+    "jellyfin/cosmo_password".sopsFile = ../../secrets/nix-server.yaml;
+    "jellyfin/bazarr_apikey".sopsFile = ../../secrets/nix-server.yaml;
+  };
 
   # MOTD with vulnerability monitoring
   motd.enable = true;

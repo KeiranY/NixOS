@@ -2,25 +2,10 @@
   config,
   pkgs,
   lib,
+  inputs,
   ...
 }: {
-  # Home Assistant
-  services.home-assistant = {
-    enable = true;
-    configDir = "/var/lib/home-assistant";
-    config = {
-      default_config = {};
-      http = {server_port = 8080;};
-      mqtt = {
-        broker = "localhost";
-        port = 1883;
-      };
-      recorder = {
-        db_url = "sqlite:////var/lib/home-assistant/home-assistant_v2.db";
-      };
-      lovelace = {mode = "yaml";};
-    };
-  };
+  imports = [./multimedia.nix ./home-assistant.nix];
 
   # MQTT broker
   services.mosquitto = {
@@ -34,37 +19,7 @@
     ];
   };
 
-  # ARR stack
-  services.sonarr = {
-    enable = true;
-    openFirewall = true;
-    settings.server.port = 8082;
-  };
-  services.radarr = {
-    enable = true;
-    openFirewall = true;
-    settings.server.port = 8083;
-  };
-  services.lidarr = {
-    enable = true;
-    openFirewall = true;
-    settings.server.port = 8084;
-  };
-  services.prowlarr = {
-    enable = true;
-    openFirewall = true;
-    settings.server.port = 8085;
-  };
-  services.readarr = {
-    enable = true;
-    openFirewall = true;
-    settings.server.port = 8086;
-  };
-  services.bazarr = {
-    enable = true;
-    openFirewall = true;
-    listenPort = 8087;
-  };
+  # Download clients & utilities
   services.qbittorrent = {
     enable = true;
     openFirewall = true;
@@ -80,6 +35,7 @@
   };
   services.flaresolverr = {
     enable = true;
+    openFirewall = true;
     port = 8088;
   };
 
@@ -92,17 +48,11 @@
   # services.logstash.enable = true;
   # services.filebeat.enable = true;
 
-  # Open firewall ports
+  # Open firewall ports (non-multimedia)
+  # qBittorrent (8081) and FlareSolverr (8088) use openFirewall = true
+  # Home Assistant (8080) and Mosquitto (1883) need manual firewall
   networking.firewall.allowedTCPPorts = [
     8080 # Home Assistant
     1883 # MQTT
-    8081 # qBittorrent
-    8082 # Sonarr
-    8083 # Radarr
-    8084 # Lidarr
-    8085 # Prowlarr
-    8086 # Readarr
-    8087 # Bazarr
-    8088 # FlareSolverr
   ];
 }
