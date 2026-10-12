@@ -2,13 +2,32 @@
 pkgs.mkShell {
   name = "nixos-fleet-dev";
   packages = with pkgs; [
+    # NixOS rebuild and deployment
+    nixos-rebuild
+    # Nix tooling
+    nix-tree
+    nix-output-monitor
+    nixfmt
+    # Secret management
     sops
     age
     ssh-to-age
+    # LSP and formatting
     alejandra
-    gh
-    openssh
     nil
+    # Version control
+    gh
+    git
+    # Utilities
+    jq
+    curl
+    ripgrep
+    fd
+    htop
+    tmux
+    direnv
+    nix-direnv
+    openssh
   ];
   shellHook = ''
     # Keep commits working on a fresh machine that has no git identity.
