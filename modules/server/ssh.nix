@@ -26,7 +26,6 @@
       LoginGraceTime = 30;
       PermitUserEnvironment = false;
       AllowAgentForwarding = false;
-      AllowTcpForwarding = false;
       X11Forwarding = false;
       PrintLastLog = true;
       TCPKeepAlive = false;
