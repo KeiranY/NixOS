@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ pkgs ? import <nixpkgs> { }, ... }:
 pkgs.mkShell {
   name = "nixos-fleet-dev";
   packages = with pkgs; [
