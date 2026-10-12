@@ -53,9 +53,7 @@
     jails = {
       sshd = {
         enabled = true;
-        filter = "sshd";
         settings = ''
-          logpath = /var/log/auth.log
           maxretry = 3
           bantime = 1h
           findtime = 10m
