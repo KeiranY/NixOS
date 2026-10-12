@@ -50,12 +50,7 @@
         "diffie-hellman-group18-sha512"
         "diffie-hellman-group14-sha256"
       ];
-      HostKeyAlgorithms = [
-        "ssh-ed25519"
-        "ssh-ed25519-cert-v01@openssh.com"
-        "rsa-sha2-512"
-        "rsa-sha2-256"
-      ];
+      HostKeyAlgorithms = "ssh-ed25519,ssh-ed25519-cert-v01@openssh.com,rsa-sha2-512,rsa-sha2-256";
     };
   };
 
