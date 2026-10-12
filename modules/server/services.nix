@@ -38,32 +38,42 @@
   services.sonarr = {
     enable = true;
     openFirewall = true;
+    settings.server.port = 8082;
   };
   services.radarr = {
     enable = true;
     openFirewall = true;
+    settings.server.port = 8083;
   };
   services.lidarr = {
     enable = true;
     openFirewall = true;
+    settings.server.port = 8084;
   };
   services.prowlarr = {
     enable = true;
     openFirewall = true;
+    settings.server.port = 8085;
   };
   services.readarr = {
     enable = true;
     openFirewall = true;
+    settings.server.port = 8086;
   };
   services.bazarr = {
     enable = true;
     openFirewall = true;
+    listenPort = 8087;
   };
   services.qbittorrent = {
     enable = true;
     openFirewall = true;
+    webuiPort = 8081;
   };
-  services.flaresolverr.enable = true;
+  services.flaresolverr = {
+    enable = true;
+    port = 8088;
+  };
 
   # ELK stack (disabled for now)
   # nixpkgs.config.permittedInsecurePackages = ["elasticsearch-7.17.27"];
