@@ -1,9 +1,10 @@
-# Headless server bundle: SSH access only, no graphical stack.
-{ ... }:
-{
+# Server modules - import individually as needed
+{...}: {
   imports = [
     ./ssh.nix
+    ./fail2ban.nix
+    ./laptop-hardware.nix
+    ./services.nix
+    ./reverse-proxy.nix
   ];
-
-  networking.firewall.enable = true;
 }
