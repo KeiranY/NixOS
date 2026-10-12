@@ -59,9 +59,8 @@ in {
             ${lib.optionalString cfg.staging "--staging"} \
             ${lib.concatStringsSep " " (lib.map (d: "-d ${d}") cfg.domains)}
         '';
-        ${lib.optionalAttrs (cfg.preHook != null) { ExecStartPre = cfg.preHook; }}
-        ${lib.optionalAttrs (cfg.postHook != null) { ExecStartPost = cfg.postHook; }}
-      };
+      } // lib.optionalAttrs (cfg.preHook != null) { serviceConfig.ExecStartPre = cfg.preHook; }
+      // lib.optionalAttrs (cfg.postHook != null) { serviceConfig.ExecStartPost = cfg.postHook; };
     };
 
     # Systemd timer for automatic renewal
