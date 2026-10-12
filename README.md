@@ -104,7 +104,7 @@ First login uses password `changeme` — change it immediately with `passwd`.
 sudo nixos-rebuild switch --flake .#nix-laptop
 
 # remote deploy to the server
-nixos-rebuild switch --flake .#nix-server --target-host kcy@nix-server --use-remote-sudo
+nixos-rebuild switch --flake .#nix-server --target-host kcy@nix-server --sudo
 
 # update all inputs together
 nix flake update
