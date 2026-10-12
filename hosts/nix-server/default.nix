@@ -16,7 +16,4 @@
   sops.defaultSopsFile = ../../secrets/common.yaml;
   # Host-specific secrets go in secrets/nix-server.yaml, e.g.:
   # sops.secrets."something".sopsFile = ../../secrets/nix-server.yaml;
-
-  # MOTD with vulnerability monitoring
-  motd.enable = true;
 }
