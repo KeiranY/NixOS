@@ -72,8 +72,6 @@
     serverConfig = {
       Preferences = {
         WebUI = {
-          Username = "";
-          Password_PBKDF2 = "";
           LocalHostAuth = false;
           BypassAuthenticationSubnet = "0.0.0.0/0";
         };
