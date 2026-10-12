@@ -10,6 +10,7 @@
   motdGenerate = pkgs.writeShellScriptBin "motd-generate" ''
     #!/usr/bin/env bash
     set -euo pipefail
+    export HOME=/root
     export PATH="/run/current-system/sw/bin:${pkgs.coreutils}/bin:${pkgs.gawk}/bin:${pkgs.procps}/bin:${pkgs.gnused}/bin:$PATH"
     OUT_DIR="/etc/motd.d"
     mkdir -p "$OUT_DIR"
@@ -21,15 +22,21 @@
 
     # --- Vulnix section ---
     VULN_FILE="$OUT_DIR/vuln"
-    if command -v vulnix >/dev/null; then
-      if vulnix --system --json 2>/dev/null | jq -r '
-        .[] | select(.affected) |
-        "\(.package.name)-\(.package.version) → \(.fixedVersion // "unfixed") [\(.cves // [] | join(", "))]"
-      ' > "$VULN_FILE.tmp" 2>/dev/null; then
-        mv "$VULN_FILE.tmp" "$VULN_FILE"
+    if command -v vulnix >/dev/null 2>&1; then
+      VULN_JSON=$(vulnix --system --json 2>/dev/null) || true
+      if [[ -n "$VULN_JSON" ]]; then
+        echo "$VULN_JSON" | jq -r '
+          .[] | select(.affected) |
+          "\(.package.name)-\(.package.version) → \(.fixedVersion // "unfixed") [\(.cves // [] | join(", "))]"
+        ' > "$VULN_FILE.tmp" 2>/dev/null || true
+        if [[ -s "$VULN_FILE.tmp" ]]; then
+          mv "$VULN_FILE.tmp" "$VULN_FILE"
+        else
+          echo "vulnix output parse failed" > "$VULN_FILE"
+          rm -f "$VULN_FILE.tmp"
+        fi
       else
         echo "vulnix scan failed" > "$VULN_FILE"
-        rm -f "$VULN_FILE.tmp"
       fi
     else
       echo "vulnix not installed" > "$VULN_FILE"
@@ -39,7 +46,7 @@
     UPDATE_FILE="$OUT_DIR/updates"
     FLAKE_PATH="/root/NixOS"
     if [[ -d "$FLAKE_PATH/.git" ]]; then
-      if nix flake update --dry-run --flake "$FLAKE_PATH" 2>&1 |
+      if nix flake update --flake "$FLAKE_PATH" 2>&1 |
           ${pkgs.gawk}/bin/awk '/would be updated|updating/ {print}' |
           head -20 > "$UPDATE_FILE.tmp" 2>/dev/null; then
         mv "$UPDATE_FILE.tmp" "$UPDATE_FILE"
