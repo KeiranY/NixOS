@@ -6,6 +6,7 @@
     ../../modules/server/fail2ban.nix
     ../../modules/server/laptop-hardware.nix
     ../../modules/server/services.nix
+    ../../modules/server/home-assistant.nix
     ../../modules/server/reverse-proxy.nix
   ];
 
@@ -23,6 +24,7 @@
     "jellyfin/admin_password".sopsFile = ../../secrets/nix-server.yaml;
     "jellyfin/cosmo_password".sopsFile = ../../secrets/nix-server.yaml;
     "jellyfin/bazarr_apikey".sopsFile = ../../secrets/nix-server.yaml;
+    "home_assistant_password".sopsFile = ../../secrets/nix-server.yaml;
   };
 
   # MOTD with vulnerability monitoring
