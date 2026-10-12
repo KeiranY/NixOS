@@ -22,11 +22,15 @@
     # --- Vulnix section ---
     VULN_FILE="$OUT_DIR/vuln"
     if command -v vulnix >/dev/null; then
-      vulnix --system --json 2>/dev/null | jq -r '
+      if vulnix --system --json 2>/dev/null | jq -r '
         .[] | select(.affected) |
         "\(.package.name)-\(.package.version) → \(.fixedVersion // "unfixed") [\(.cves // [] | join(", "))]"
-      ' > "$VULN_FILE.tmp" 2>/dev/null || echo "vulnix scan failed" > "$VULN_FILE.tmp"
-      mv "$VULN_FILE.tmp" "$VULN_FILE"
+      ' > "$VULN_FILE.tmp" 2>/dev/null; then
+        mv "$VULN_FILE.tmp" "$VULN_FILE"
+      else
+        echo "vulnix scan failed" > "$VULN_FILE"
+        rm -f "$VULN_FILE.tmp"
+      fi
     else
       echo "vulnix not installed" > "$VULN_FILE"
     fi
@@ -35,11 +39,14 @@
     UPDATE_FILE="$OUT_DIR/updates"
     FLAKE_PATH="/root/NixOS"
     if [[ -d "$FLAKE_PATH/.git" ]]; then
-      cd "$FLAKE_PATH"
-      nix flake update --dry-run 2>&1 |
-        ${pkgs.gawk}/bin/awk '/would be updated|updating/ {print}' |
-        head -20 > "$UPDATE_FILE.tmp" 2>/dev/null || echo "flake update check failed" > "$UPDATE_FILE.tmp"
-      mv "$UPDATE_FILE.tmp" "$UPDATE_FILE"
+      if nix flake update --dry-run --flake "$FLAKE_PATH" 2>&1 |
+          ${pkgs.gawk}/bin/awk '/would be updated|updating/ {print}' |
+          head -20 > "$UPDATE_FILE.tmp" 2>/dev/null; then
+        mv "$UPDATE_FILE.tmp" "$UPDATE_FILE"
+      else
+        echo "flake update check failed" > "$UPDATE_FILE"
+        rm -f "$UPDATE_FILE.tmp"
+      fi
     else
       echo "flake not found at $FLAKE_PATH" > "$UPDATE_FILE"
     fi
