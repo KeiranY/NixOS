@@ -50,7 +50,7 @@
   # Fail2ban for SSH brute-force protection
   services.fail2ban = {
     enable = true;
-    settings = {
+    jails = {
       sshd = {
         enabled = true;
         port = "ssh";
