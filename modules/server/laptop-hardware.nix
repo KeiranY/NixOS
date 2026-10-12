@@ -1,7 +1,7 @@
 { config, pkgs, lib, ... }:
 {
   # Disable sleep/suspend on lid close for server
-  systemd.logind = {
+  services.logind = {
     lidSwitch = "ignore";
     lidSwitchDocked = "ignore";
     handleLidSwitch = "ignore";
