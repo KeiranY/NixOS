@@ -23,7 +23,7 @@
     let
       lib = import ./lib { inherit inputs; };
       systems = [ "x86_64-linux" ];
-      devShell = import ./devshell.nix { pkgs = nixpkgs.legacyPackages.x86_64-linux; };
+      devShellFn = import ./devshell.nix;
     in
     {
       nixosConfigurations = {
@@ -46,7 +46,7 @@
       devShells = nixpkgs.lib.genAttrs systems (system:
         let pkgs = nixpkgs.legacyPackages.${system}; in
         {
-          default = devShell { inherit pkgs; };
+          default = devShellFn { inherit pkgs; };
         });
     };
 }
