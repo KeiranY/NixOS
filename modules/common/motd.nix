@@ -1,5 +1,10 @@
-{ config, pkgs, lib, hostname, ... }:
-let
+{
+  config,
+  pkgs,
+  lib,
+  hostname,
+  ...
+}: let
   cfg = config.motd;
 
   motdGenerate = pkgs.writeShellScriptBin "motd-generate" ''
@@ -8,7 +13,7 @@ let
     OUT_DIR="/etc/motd.d"
     mkdir -p "$OUT_DIR"
     TIMESTAMP=$(date -u +"%Y-%m-%d %H:%M UTC")
-    HOST=$(hostname)
+    HOST=$(cat /etc/hostname)
 
     # Box drawing chars (Unicode)
     TL="┌"; TR="┐"; BL="└"; BR="┘"; H="─"; V="│"; T="┬"; B="┴"; L="├"; R="┤"; TL2="├"; TR2="┤"
@@ -62,7 +67,8 @@ let
       fi
       printf "%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s\n" \
         "$TL2" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$TR2"
-      printf "%s  📦 PENDING UPDATES (nix flake update --dry-run — %s)                %s\n" "$V" "$(date -u +"%Y-%m-%d")" "$V"
+      printf "%s  💾 DISK HEALTH (smartd)                                                 %s\n" "$V" "$V"
+      printf "%s  %s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s  %s\n" "$V" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$"
       printf "%s  %s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s  %s\n" "$V" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$H" "$V"
       if [[ -s "$UPDATE_FILE" ]] && ! grep -q "failed\|not found" "$UPDATE_FILE"; then
         while IFS= read -r line; do
@@ -99,7 +105,7 @@ in {
   };
 
   config = lib.mkIf cfg.enable {
-    environment.systemPackages = [ pkgs.vulnix pkgs.jq pkgs.coreutils pkgs.gawk pkgs.git motdGenerate ];
+    environment.systemPackages = [pkgs.vulnix pkgs.jq pkgs.coreutils pkgs.gawk pkgs.git motdGenerate];
 
     environment.etc."motd.d".source = pkgs.runCommand "motd-d" {} ''
       mkdir -p $out
@@ -107,7 +113,7 @@ in {
     '';
 
     systemd.timers.motd-update = {
-      wantedBy = [ "timers.target" ];
+      wantedBy = ["timers.target"];
       timerConfig = {
         OnCalendar = "daily *-*-* 06:00:00";
         Persistent = true;
@@ -115,21 +121,21 @@ in {
       };
     };
     systemd.services.motd-update = {
-      wantedBy = [ "timers.target" ];
+      wantedBy = ["timers.target"];
       serviceConfig = {
         Type = "oneshot";
         ExecStart = "${motdGenerate}/bin/motd-generate";
-        After = [ "network-online.target" ];
-        Wants = [ "network-online.target" ];
+        After = ["network-online.target"];
+        Wants = ["network-online.target"];
       };
     };
 
     systemd.services.motd-update-boot = {
-      wantedBy = [ "multi-user.target" ];
+      wantedBy = ["multi-user.target"];
       serviceConfig = {
         Type = "oneshot";
         ExecStart = "${motdGenerate}/bin/motd-generate";
-        After = [ "network-online.target" ];
+        After = ["network-online.target"];
       };
     };
   };
