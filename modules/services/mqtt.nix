@@ -29,23 +29,25 @@ in {
   config = lib.mkIf cfg.enable {
     services.mosquitto = {
       enable = true;
-      extraConfig = ''
-        listener ${toString cfg.port}
-        protocol mqtt
-        allow_anonymous ${if cfg.allowAnonymous then "true" else "false"}
-        ${lib.optionalString (cfg.passwordFile != null) "password_file ${cfg.passwordFile}"}
-
-        listener ${toString cfg.websocketPort}
-        protocol websockets
-        allow_anonymous ${if cfg.allowAnonymous then "true" else "false"}
-        ${lib.optionalString (cfg.passwordFile != null) "password_file ${cfg.passwordFile}"}
-
-        persistence true
-        persistence_location /var/lib/mosquitto/
-        log_dest file /var/log/mosquitto/mosquitto.log
-        log_type all
-        connection_messages true
-      '';
+      settings = {
+        listeners = [
+          {
+            port = cfg.port;
+            protocol = "mqtt";
+            allow_anonymous = cfg.allowAnonymous;
+          }
+          {
+            port = cfg.websocketPort;
+            protocol = "websockets";
+            allow_anonymous = cfg.allowAnonymous;
+          }
+        ];
+        persistence = true;
+        persistence_location = "/var/lib/mosquitto/";
+        log_dest = [ "file /var/log/mosquitto/mosquitto.log" ];
+        log_type = [ "all" ];
+        connection_messages = true;
+      };
     };
 
     networking.firewall.allowedTCPPorts = [ cfg.port cfg.websocketPort ];
