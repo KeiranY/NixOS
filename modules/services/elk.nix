@@ -41,10 +41,10 @@ in {
     };
   };
 
-  config = lib.mkIf cfg.enable {
-    # Elasticsearch
-    config = lib.mkIf cfg.elasticsearch.enable {
-      services.elasticsearch = {
+  config = lib.mkIf cfg.enable (
+    {
+      # Elasticsearch
+      services.elasticsearch = lib.mkIf cfg.elasticsearch.enable {
         enable = true;
         package = pkgs.elasticsearch;
         settings = {
@@ -63,16 +63,15 @@ in {
         ];
       };
 
-      systemd.tmpfiles.rules = [
+      systemd.tmpfiles.rules = lib.mkIf cfg.elasticsearch.enable [
         "d ${cfg.elasticsearch.dataDir} 0750 elasticsearch elasticsearch - -"
         "d /var/log/elasticsearch 0750 elasticsearch elasticsearch - -"
       ];
 
-      networking.firewall.allowedTCPPorts = [ cfg.elasticsearch.port ];
-    };
-
-    # Logstash
-    config = lib.mkIf cfg.logstash.enable {
+      networking.firewall.allowedTCPPorts = lib.mkIf cfg.elasticsearch.enable [ cfg.elasticsearch.port ];
+    }
+    // lib.mkIf cfg.logstash.enable {
+      # Logstash
       users.users.logstash = {
         isSystemUser = true;
         group = "logstash";
@@ -134,10 +133,9 @@ in {
       };
 
       networking.firewall.allowedTCPPorts = [ cfg.logstash.port cfg.logstash.httpPort ];
-    };
-
-    # Kibana
-    config = lib.mkIf cfg.kibana.enable {
+    }
+    // lib.mkIf cfg.kibana.enable {
+      # Kibana
       services.kibana = {
         enable = true;
         package = pkgs.kibana;
@@ -150,10 +148,9 @@ in {
       };
 
       networking.firewall.allowedTCPPorts = [ cfg.kibana.port ];
-    };
-
-    # Filebeat
-    config = lib.mkIf cfg.filebeat.enable {
+    }
+    // lib.mkIf cfg.filebeat.enable {
+      # Filebeat
       users.users.filebeat = {
         isSystemUser = true;
         group = "filebeat";
@@ -225,6 +222,6 @@ ${lib.concatStringsSep "\n" (lib.map (p: "            - ${p}") cfg.filebeat.logP
           RestartSec = 10;
         };
       };
-    };
-  };
+    }
+  );
 }
