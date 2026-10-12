@@ -165,10 +165,7 @@ in {
     serviceConfig = {
       Type = "oneshot";
       RemainAfterExit = true;
-      ExecStart = ''
-        mkdir -p /run/bazarr
-        printf "DYNACONF_jellyfin__enable=true\nDYNACONF_jellyfin__url=http://localhost:8096\nDYNACONF_jellyfin__apikey=$(cat ${config.sops.secrets."jellyfin/bazarr_apikey".path})\nDYNACONF_jellyfin__refresh_method=Immediate\nDYNACONF_jellyfin__movie_library=Movies\nDYNACONF_jellyfin__series_library=Shows\nDYNACONF_jellyfin__update_movie_library=true\nDYNACONF_jellyfin__update_series_library=true\n" > /run/bazarr/env
-      '';
+      ExecStart = "${pkgs.bash}/bin/bash -c '${pkgs.coreutils}/bin/mkdir -p /run/bazarr && printf \"DYNACONF_jellyfin__enable=true\\nDYNACONF_jellyfin__url=http://localhost:8096\\nDYNACONF_jellyfin__apikey=$(cat ${config.sops.secrets.\"jellyfin/bazarr_apikey\".path})\\nDYNACONF_jellyfin__refresh_method=Immediate\\nDYNACONF_jellyfin__movie_library=Movies\\nDYNACONF_jellyfin__series_library=Shows\\nDYNACONF_jellyfin__update_movie_library=true\\nDYNACONF_jellyfin__update_series_library=true\\n\" > /run/bazarr/env'";
       User = "root";
     };
   };
