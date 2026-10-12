@@ -28,7 +28,6 @@
       AllowAgentForwarding = false;
       AllowTcpForwarding = false;
       X11Forwarding = false;
-      PrintMotd = false;
       PrintLastLog = true;
       TCPKeepAlive = false;
       Compression = "no";
