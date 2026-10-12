@@ -18,8 +18,9 @@ run() {
     fi
 }
 
-echo "Checking formatting..."
-run develop --command alejandra --check $NIX_FILES
+echo "Formatting Nix files..."
+run develop --command alejandra $NIX_FILES
+git add $NIX_FILES
 
 echo "Running nixos-rebuild dry-build for nix-laptop..."
 run develop --command nixos-rebuild dry-build --flake .#nix-laptop
