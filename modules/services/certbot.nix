@@ -87,14 +87,10 @@ in {
       };
     };
 
-    # Nginx snippet for ACME challenge
-    nginx = lib.mkIf (config.nginx ? enable && config.nginx.enable) {
-      httpConfig = ''
-        location /.well-known/acme-challenge/ {
-          root ${cfg.webrootPath};
-          default_type "text/plain";
-        }
-      '';
-    };
+    # Note: When using nginx as a reverse proxy, add this to your nginx config:
+    # location /.well-known/acme-challenge/ {
+    #   root ${cfg.webrootPath};
+    #   default_type "text/plain";
+    # }
   };
 }
