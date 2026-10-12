@@ -55,7 +55,6 @@
         enabled = true;
         filter = "sshd";
         settings = ''
-          port = ssh
           logpath = /var/log/auth.log
           maxretry = 3
           bantime = 1h
