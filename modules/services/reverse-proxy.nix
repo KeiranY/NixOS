@@ -1,6 +1,26 @@
 { config, pkgs, lib, ... }:
 let
   cfg = config.services.reverseProxy;
+  cloneScript = pkgs.writeShellScript "reverse-proxy-clone" ''
+    if [[ ! -d ${cfg.installDir}/.git ]]; then
+      ${pkgs.git}/bin/git clone --branch ${cfg.branch} ${cfg.repo} ${cfg.installDir}
+    else
+      cd ${cfg.installDir} && ${pkgs.git}/bin/git pull origin ${cfg.branch}
+    fi
+  '';
+  buildScript = pkgs.writeShellScript "reverse-proxy-build" ''
+    # Auto-detect build system
+    if [[ -f go.mod ]]; then
+      ${pkgs.go}/bin/go build -o reverse-proxy .
+    elif [[ -f Cargo.toml ]]; then
+      ${pkgs.rust}/bin/cargo build --release
+      cp target/release/reverse-proxy ${cfg.installDir}/reverse-proxy
+    elif [[ -f package.json ]]; then
+      ${pkgs.nodejs}/bin/npm ci && ${pkgs.nodejs}/bin/npm run build
+    elif [[ -f Makefile ]]; then
+      make
+    fi
+  '';
 in {
   options.services.reverseProxy = {
     enable = lib.mkEnableOption "Custom reverse proxy (from https://github.com/KeiranY/reverse-proxy)";
@@ -48,13 +68,7 @@ in {
       serviceConfig = {
         Type = "oneshot";
         RemainAfterExit = true;
-        ExecStart = ''
-          if [[ ! -d ${cfg.installDir}/.git ]]; then
-            ${pkgs.git}/bin/git clone --branch ${cfg.branch} ${cfg.repo} ${cfg.installDir}
-          else
-            cd ${cfg.installDir} && ${pkgs.git}/bin/git pull origin ${cfg.branch}
-          fi
-        '';
+        ExecStart = "${cloneScript}";
       };
     };
 
@@ -66,19 +80,7 @@ in {
         Type = "oneshot";
         RemainAfterExit = true;
         WorkingDirectory = cfg.installDir;
-        ExecStart = ''
-          # Auto-detect build system
-          if [[ -f go.mod ]]; then
-            ${pkgs.go}/bin/go build -o reverse-proxy .
-          elif [[ -f Cargo.toml ]]; then
-            ${pkgs.rust}/bin/cargo build --release
-            cp target/release/reverse-proxy ${cfg.installDir}/reverse-proxy
-          elif [[ -f package.json ]]; then
-            ${pkgs.nodejs}/bin/npm ci && ${pkgs.nodejs}/bin/npm run build
-          elif [[ -f Makefile ]]; then
-            make
-          fi
-        '';
+        ExecStart = "${buildScript}";
       };
     };
 

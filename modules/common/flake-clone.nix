@@ -1,6 +1,11 @@
 { config, pkgs, lib, hostname, ... }:
 let
   cfg = config.flakeClone;
+  cloneScript = pkgs.writeShellScript "flake-clone" ''
+    if [[ ! -d /etc/nixos/.git ]]; then
+      ${pkgs.git}/bin/git clone --branch "${cfg.flakeBranch}" "${cfg.flakeRepo}" /etc/nixos
+    fi
+  '';
 in {
   options.flakeClone = {
     enable = lib.mkEnableOption "Auto-clone flake repo to /etc/nixos on first boot";
@@ -23,11 +28,7 @@ in {
         Type = "oneshot";
         RemainAfterExit = true;
         ExecStartPre = [ "-${pkgs.coreutils}/bin/mkdir -p /etc/nixos" ];
-        ExecStart = ''
-          if [[ ! -d /etc/nixos/.git ]]; then
-            ${pkgs.git}/bin/git clone --branch "${cfg.flakeBranch}" "${cfg.flakeRepo}" /etc/nixos
-          fi
-        '';
+        ExecStart = "${cloneScript}";
         ConditionPathExists = "!/etc/nixos/.git";
       };
     };
