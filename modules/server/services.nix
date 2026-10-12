@@ -35,12 +35,12 @@
   # ELK stack
   nixpkgs.config.permittedInsecurePackages = ["elasticsearch-7.17.27"];
   services.elasticsearch = {
-    enable = true;
+    # enable = true;
     package = pkgs.elasticsearch;
   };
 
-  services.logstash.enable = true;
-  services.filebeat.enable = true;
+  # services.logstash.enable = true;
+  # services.filebeat.enable = true;
 
   # Open firewall ports for ARR services and Home Assistant
   networking.firewall.allowedTCPPorts = [
