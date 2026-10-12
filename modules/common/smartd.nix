@@ -22,7 +22,7 @@ in {
       "-i 1800"
       "-d removable"
       "-n standby"
-      "-a"
+
       "-M exec ${smartdNotify}"
     ];
     devices = [

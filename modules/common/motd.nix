@@ -36,7 +36,7 @@
     if [[ -d "$FLAKE_PATH/.git" ]]; then
       cd "$FLAKE_PATH"
       nix flake update --dry-run 2>&1 |
-        awk '/would be updated|updating/ {print}' |
+        ${pkgs.gawk}/bin/awk '/would be updated|updating/ {print}' |
         head -20 > "$UPDATE_FILE.tmp" 2>/dev/null || echo "flake update check failed" > "$UPDATE_FILE.tmp"
       mv "$UPDATE_FILE.tmp" "$UPDATE_FILE"
     else
