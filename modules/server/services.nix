@@ -5,7 +5,7 @@
   inputs,
   ...
 }: {
-  imports = [./multimedia.nix ./home-assistant.nix];
+  imports = [./multimedia.nix ./home-assistant.nix ./acme.nix];
 
   # MQTT broker
   services.mosquitto = {

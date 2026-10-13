@@ -1,4 +1,8 @@
-{hostname, ...}: {
+{
+  config,
+  hostname,
+  ...
+}: {
   imports = [
     ./hardware-configuration.nix
     ../../modules/hardware/laptop.nix
@@ -25,36 +29,33 @@
     "jellyfin/cosmo_password".sopsFile = ../../secrets/nix-server.yaml;
     "jellyfin/bazarr_apikey".sopsFile = ../../secrets/nix-server.yaml;
     "home_assistant_password".sopsFile = ../../secrets/nix-server.yaml;
+    # Reverse proxy Auth0 secret
+    "auth0_secret".sopsFile = ../../secrets/nix-server.yaml;
   };
 
   # MOTD with vulnerability monitoring
   motd.enable = true;
   flakeClone.enable = true;
 
-  # Reverse proxy configuration (enable and configure as needed)
-  # services.reverse-proxy = {
-  #   enable = true;
-  #   domain = "example.com";
-  #   httpPort = 80;
-  #   sslPort = 443;
-  #   router = {
-  #     "app.example.com" = "http://127.0.0.1:8080";
-  #     "api.example.com" = "http://127.0.0.1:3000";
-  #   };
-  #   allowedLogin = "req => req.oidc.user.email.endsWith('@example.com')";
-  #   noLogin = "req => req.hostname === 'public.example.com'";
-  #   sslKeyPath = "/etc/letsencrypt/live/example.com/privkey.pem";
-  #   sslCertPath = "/etc/letsencrypt/live/example.com/fullchain.pem";
-  #   auth0 = {
-  #     secret = config.sops.secrets.reverse-proxy.auth0.secret;
-  #     baseURL = "https://example.com:443";
-  #     clientID = "your-auth0-client-id";
-  #     issuerBaseURL = "https://your-tenant.auth0.com";
-  #   };
-  # };
-
-  # Add reverse-proxy auth0 secret to sops.secrets:
-  # sops.secrets = {
-  #   "reverse-proxy/auth0/secret".sopsFile = ../../secrets/nix-server.yaml;
-  # };
+  # Reverse proxy configuration
+  services.reverse-proxy = {
+    enable = true;
+    domain = "keirany.com";
+    httpPort = 80;
+    sslPort = 443;
+    router = {
+      "home.keirany.com" = "http://127.0.0.1:8123";
+      "radarr.keirany.com" = "http://127.0.0.1:7878";
+    };
+    allowedLogin = "req => req.oidc.user.email === 'kayceewye@gmail.com'";
+    noLogin = "() => false";
+    sslKeyPath = "/var/lib/acme/keirany.com/key.pem";
+    sslCertPath = "/var/lib/acme/keirany.com/fullchain.pem";
+    auth0 = {
+      secretPath = config.sops.secrets.auth0_secret.path;
+      baseURL = "https://keirany.com:443";
+      clientID = "E2S4dvDNBv8OR0js7rDkAAmDOTIJAwAV";
+      issuerBaseURL = "https://dev-t6ks-b1e.eu.auth0.com";
+    };
+  };
 }

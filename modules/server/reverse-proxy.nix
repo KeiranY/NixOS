@@ -61,6 +61,11 @@ in {
             type = lib.types.str;
             description = "Auth0 client secret (should be from sops-nix)";
           };
+          secretPath = lib.mkOption {
+            type = lib.types.nullOr lib.types.path;
+            default = null;
+            description = "Path to file containing Auth0 client secret (alternative to secret)";
+          };
           baseURL = lib.mkOption {
             type = lib.types.str;
             description = "Auth0 base URL (e.g., https://example.com:443)";
@@ -88,7 +93,7 @@ in {
 
     systemd.services.reverse-proxy = {
       enable = true;
-      after = ["network-online.target"];
+      after = ["network-online.target"] ++ lib.optional (cfg.sslKeyPath != null && cfg.sslCertPath != null) "acme-${cfg.domain}.service";
       wants = ["network-online.target"];
       path = [cfg.sslKeyPath cfg.sslCertPath];
       serviceConfig = {
@@ -104,12 +109,17 @@ in {
       # Generate config.js before start
       serviceConfig.ExecStartPre = ''
                 mkdir -p /run/reverse-proxy
+                ${
+          if cfg.auth0 != null && cfg.auth0.secretPath != null
+          then "auth0Secret=$(cat " + cfg.auth0.secretPath + ")"
+          else ""
+        }
                 cat > /run/reverse-proxy/config.js <<'EOF'
         module.exports = {
-          httpPort: ${lib.generators.toString cfg.httpPort},
-          sslPort: ${lib.generators.toString cfg.sslPort},
-          domain: ${lib.generators.toString cfg.domain},
-          router: ${lib.generators.toJavaScript cfg.router},
+          httpPort: ${toString cfg.httpPort},
+          sslPort: ${toString cfg.sslPort},
+          domain: ${lib.escapeShellArg cfg.domain},
+          router: ${builtins.toJSON cfg.router},
           allowedLogin: ${
           if cfg.allowedLogin != null
           then cfg.allowedLogin
@@ -120,24 +130,26 @@ in {
           then cfg.noLogin
           else "() => false"
         },
-          sslKeyPath: ${lib.generators.toString cfg.sslKeyPath},
-          sslCertPath: ${lib.generators.toString cfg.sslCertPath},
-          auth0Secret: ${lib.generators.toString (
-          if cfg.auth0 != null
+          sslKeyPath: ${lib.escapeShellArg cfg.sslKeyPath},
+          sslCertPath: ${lib.escapeShellArg cfg.sslCertPath},
+          auth0Secret: ${lib.escapeShellArg (
+          if cfg.auth0 != null && cfg.auth0.secretPath != null
+          then "$auth0Secret"
+          else if cfg.auth0 != null
           then cfg.auth0.secret
           else ""
         )},
-          auth0BaseURL: ${lib.generators.toString (
+          auth0BaseURL: ${lib.escapeShellArg (
           if cfg.auth0 != null
           then cfg.auth0.baseURL
           else ""
         )},
-          auth0ClientID: ${lib.generators.toString (
+          auth0ClientID: ${lib.escapeShellArg (
           if cfg.auth0 != null
           then cfg.auth0.clientID
           else ""
         )},
-          auth0IssuerBaseURL: ${lib.generators.toString (
+          auth0IssuerBaseURL: ${lib.escapeShellArg (
           if cfg.auth0 != null
           then cfg.auth0.issuerBaseURL
           else ""
