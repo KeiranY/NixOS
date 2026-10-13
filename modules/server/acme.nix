@@ -12,7 +12,7 @@ in {
       dnsProvider = "porkbun";
       environmentFile = config.sops.templates."acme_env".path;
       credentialFiles = {
-        "PORKBUN_PAPI_KEY_FILE" = "/run/secrets/porkbun_papi_key";
+        "PORKBUN_API_KEY_FILE" = "/run/secrets/porkbun_papi_key";
         "PORKBUN_SECRET_API_KEY_FILE" = "/run/secrets/porkbun_secret_api_key";
       };
     };
