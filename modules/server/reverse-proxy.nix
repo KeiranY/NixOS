@@ -95,7 +95,6 @@ in {
       enable = true;
       after = ["network-online.target"] ++ lib.optional (cfg.sslKeyPath != null && cfg.sslCertPath != null) "acme-${cfg.domain}.service";
       wants = ["network-online.target"];
-      path = [cfg.sslKeyPath cfg.sslCertPath];
       serviceConfig = {
         ExecStart = "${pkgs.reverse-proxy}/bin/reverse-proxy";
         WorkingDirectory = "/run/reverse-proxy";
@@ -106,57 +105,49 @@ in {
         Restart = "on-failure";
         RestartSec = 5;
       };
-      # Generate config.js before start
-      serviceConfig.ExecStartPre = ''
-                mkdir -p /run/reverse-proxy
-                ${
+      # Generate config.js before start - write as single-line ExecStartPre
+      serviceConfig.ExecStartPre = lib.mkForce (let
+        auth0SecretCmd =
           if cfg.auth0 != null && cfg.auth0.secretPath != null
-          then "auth0Secret=$(cat " + cfg.auth0.secretPath + ")"
-          else ""
-        }
-                cat > /run/reverse-proxy/config.js <<'EOF'
-        module.exports = {
-          httpPort: ${toString cfg.httpPort},
-          sslPort: ${toString cfg.sslPort},
-          domain: ${lib.escapeShellArg cfg.domain},
-          router: ${builtins.toJSON cfg.router},
-          allowedLogin: ${
-          if cfg.allowedLogin != null
-          then cfg.allowedLogin
-          else "() => true"
-        },
-          noLogin: ${
-          if cfg.noLogin != null
-          then cfg.noLogin
-          else "() => false"
-        },
-          sslKeyPath: ${lib.escapeShellArg cfg.sslKeyPath},
-          sslCertPath: ${lib.escapeShellArg cfg.sslCertPath},
-          auth0Secret: ${lib.escapeShellArg (
-          if cfg.auth0 != null && cfg.auth0.secretPath != null
-          then "$auth0Secret"
-          else if cfg.auth0 != null
-          then cfg.auth0.secret
-          else ""
-        )},
-          auth0BaseURL: ${lib.escapeShellArg (
-          if cfg.auth0 != null
-          then cfg.auth0.baseURL
-          else ""
-        )},
-          auth0ClientID: ${lib.escapeShellArg (
-          if cfg.auth0 != null
-          then cfg.auth0.clientID
-          else ""
-        )},
-          auth0IssuerBaseURL: ${lib.escapeShellArg (
-          if cfg.auth0 != null
-          then cfg.auth0.issuerBaseURL
-          else ""
-        )},
-        };
-        EOF
-      '';
+          then "auth0Secret=$(cat ${cfg.auth0.secretPath}) && "
+          else "";
+        configJs = lib.escapeShellArg (builtins.toJSON {
+          httpPort = cfg.httpPort;
+          sslPort = cfg.sslPort;
+          domain = cfg.domain;
+          router = cfg.router;
+          allowedLogin =
+            if cfg.allowedLogin != null
+            then cfg.allowedLogin
+            else "() => true";
+          noLogin =
+            if cfg.noLogin != null
+            then cfg.noLogin
+            else "() => false";
+          sslKeyPath = cfg.sslKeyPath;
+          sslCertPath = cfg.sslCertPath;
+          auth0Secret =
+            if cfg.auth0 != null && cfg.auth0.secretPath != null
+            then "$auth0Secret"
+            else if cfg.auth0 != null
+            then cfg.auth0.secret
+            else "";
+          auth0BaseURL =
+            if cfg.auth0 != null
+            then cfg.auth0.baseURL
+            else "";
+          auth0ClientID =
+            if cfg.auth0 != null
+            then cfg.auth0.clientID
+            else "";
+          auth0IssuerBaseURL =
+            if cfg.auth0 != null
+            then cfg.auth0.issuerBaseURL
+            else "";
+        });
+      in ''
+        mkdir -p /run/reverse-proxy && ${auth0SecretCmd}echo ${configJs} > /run/reverse-proxy/config.js
+      '');
     };
 
     # Firewall
