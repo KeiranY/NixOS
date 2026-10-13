@@ -6,6 +6,6 @@ pkgs.buildNpmPackage {
     owner = "KeiranY";
     repo = "reverse-proxy";
     rev = "master";
-    sha256 = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
+    sha256 = "sha256-joJ6sQJsBoNu907Rc8nCuohTrPzzPn04SVX1HLArpXQ=";
   };
 }
