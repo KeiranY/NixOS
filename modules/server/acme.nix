@@ -13,7 +13,7 @@ in {
       environmentFile = config.sops.templates."acme_env".path;
     };
     certs = {
-      "wildcard-${domain}" = {
+      "${domain}" = {
         domain = domain;
         extraDomainNames = ["*.${domain}"];
       };
