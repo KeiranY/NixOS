@@ -146,7 +146,7 @@ in {
             else "";
         });
       in ''
-        mkdir -p /run/reverse-proxy && ${auth0SecretCmd}echo ${configJs} > /run/reverse-proxy/config.js
+        ${pkgs.coreutils}/bin/mkdir -p /run/reverse-proxy && ${auth0SecretCmd}echo ${configJs} > /run/reverse-proxy/config.js
       '');
     };
 
